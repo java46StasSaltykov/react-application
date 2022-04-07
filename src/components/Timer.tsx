@@ -12,7 +12,7 @@ const Timer: React.FC<Props> = ({interval, zone, timezone}) => {
     }
     useEffect(() => {
         setInterval(tic, interval || 1000);
-    }, [])
+    }, [interval])
     
     return <div style={{marginLeft: '50vw'}}>
         <h3>{zone}</h3>
