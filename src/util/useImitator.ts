@@ -15,7 +15,8 @@ export function useImitator() {
         const intervalId = setInterval(action, 2000);
         return () => clearInterval(intervalId)
     }, [])
-    
+
+
     function action() {
         const number = getRandomNumber(1, 100);
         console.log(number)

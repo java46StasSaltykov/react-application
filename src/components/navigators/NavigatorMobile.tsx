@@ -1,23 +1,33 @@
-import { Box, Drawer, List, ListItem, ListItemText } from '@mui/material';
 import React from 'react';
 import { RouteType } from '../../models/RouteType';
-import { Link as RouterLink } from 'react-router-dom';
-
-const NavigatorMobile: React.FC<{ items: RouteType[] }> = ({items}) => {
-    const[itemNumber, setItemNumber] = React.useState<number>(0);
-    function changeItem(event: any, itemNumber: number) {
-        setItemNumber(itemNumber);
+import { Link as RouterLink, useLocation } from 'react-router-dom';
+import MenuIcon from '@mui/icons-material/Menu'
+import { AppBar, IconButton, ListItem, Toolbar, Typography, Drawer, List } from '@mui/material';
+import { getRouteIndex } from '../../util/functions';
+const NavigatorMobile: React.FC<{items: RouteType[]}> = ({items}) => {
+    
+    const [flOpen, setOpen] = React.useState<boolean>(false);
+    const location = useLocation();
+    const getRouteIndexCallback = React.useCallback(getRouteIndex, [items, location])
+    const index = getRouteIndexCallback(items, location.pathname);
+   
+   
+    function toggleOpen() {
+        setOpen(!flOpen);
     }
-    function getItems(): React.ReactNode {
-        return items.map(item => <ListItem style={{color: 'black'}} key={item.path} component={RouterLink} to={item.path}>
-            <ListItemText primary={item.label} />
-          </ListItem>)
+    function getListItems(): React.ReactNode {
+        return items.map(i => <ListItem onClick={toggleOpen} component={RouterLink} to={i.path} key={i.path}>{i.label}</ListItem>)
     }
-    return <Drawer variant='permanent'>
-        <List>
-            {getItems()}
-        </List>
-    </Drawer>
-
+    return <AppBar position="fixed">
+        <Toolbar><IconButton onClick={toggleOpen} style={{color: 'white'}}>
+            <MenuIcon/>
+        </IconButton>
+        <Typography >{items[index].label}</Typography>
+        <Drawer open={flOpen} onClose={toggleOpen} anchor="left">
+            <List>
+                {getListItems()}
+            </List>
+        </Drawer></Toolbar>
+    </AppBar>
 }
 export default NavigatorMobile;
