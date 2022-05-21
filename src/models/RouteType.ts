@@ -4,6 +4,7 @@ export type RouteType = {
     path: string;
     label: string;
     element: ReactNode;
-    authenticated?: boolean; //if true route item may be shown only if a client is authenticated
-    //TODO additional property
+    authenticated?: boolean;
+    user?: boolean;
+    admin?: boolean;
 }

@@ -24,7 +24,6 @@ const App: React.FC = () => {
     </Routes>
   </BrowserRouter>
 
-
 }
 
 export default App;
@@ -33,7 +32,9 @@ function getRoutes(relevantItems: RouteType[]): React.ReactNode {
 }
 
 function getRelevantItems(clientData: ClientData): RouteType[] {
-  //TODO for admin
-  return ROUTES.filter(r => (!!clientData.email && r.authenticated) || (!clientData.email && !r.authenticated))
+  return !!clientData.isAdmin ? 
+          ROUTES.filter(r => (!!clientData.email && r.admin && r.authenticated) || (!clientData.email && !r.admin && !r.authenticated)) :
+          ROUTES.filter(r => (!!clientData.email && r.user && r.authenticated) || (!clientData.email && !r.user && !r.authenticated));
+  
 }
 
