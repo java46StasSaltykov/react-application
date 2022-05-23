@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { COURSES_PATH, ROUTES } from './config/routes-config';
+import { COURSES_PATH, LOGIN_PATH, ROUTES } from './config/routes-config';
 import Navigator from './components/navigators/Navigator';
 import { useImitator } from './util/useImitator';
 import { useSelector } from 'react-redux';
@@ -17,12 +17,13 @@ const App: React.FC = () => {
   React.useEffect(() => setFlNavigate(false), [])
   return <BrowserRouter>
     <Navigator items={relevantItems} />
-    {flNavigate && clientData.email && <Navigate to={COURSES_PATH}></Navigate>}
+    {flNavigate && (clientData.email ? <Navigate to={COURSES_PATH}></Navigate> : <Navigate to={LOGIN_PATH}></Navigate>)}
     <Routes>
       {getRoutes(relevantItems)}
 
     </Routes>
   </BrowserRouter>
+
 
 }
 
@@ -32,9 +33,8 @@ function getRoutes(relevantItems: RouteType[]): React.ReactNode {
 }
 
 function getRelevantItems(clientData: ClientData): RouteType[] {
-  return !!clientData.isAdmin ? 
-          ROUTES.filter(r => (!!clientData.email && r.admin && r.authenticated) || (!clientData.email && !r.admin && !r.authenticated)) :
-          ROUTES.filter(r => (!!clientData.email && r.user && r.authenticated) || (!clientData.email && !r.user && !r.authenticated));
-  
+  //TODO for admin
+  return ROUTES.filter(r => (!!clientData.email && r.authenticated) ||
+    (!clientData.email && !r.authenticated && !r.administrator) || (clientData.isAdmin && r.administrator))
 }
 

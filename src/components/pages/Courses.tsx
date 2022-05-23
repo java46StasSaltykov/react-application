@@ -12,7 +12,6 @@ import ConfirmationData from "../../models/ConfirmationData";
 import courseData from "../../config/courseData.json";
 import useLayout from "../../util/useLayout";
 import { ClientData } from "../../models/ClientData";
-
 function getActions(actionsFn: (params: GridRowParams) => JSX.Element[], layout: string): GridColumns {
     const columns: GridColumns = [
         { field: "id", type: "string", headerName: "ID", align: "center", headerAlign: "center", flex: 0.5 },
@@ -40,7 +39,8 @@ const style = {
 };
 
 const Courses: React.FC = () => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const clientData = useSelector<StateType, ClientData>(state => state.clientData);
     const courses: Course[] = useSelector<StateType, Course[]>(state => state.courses);
     const [isEdit, setEdit] = React.useState(false);
     const [flOpen, setFlOpen] = React.useState<boolean>(false);
@@ -49,14 +49,18 @@ const Courses: React.FC = () => {
     const updatedCourse = React.useRef<Course>();
     const shownCourse = React.useRef<Course>();
     const layout = useLayout();
-    const clientData: ClientData = useSelector<StateType, ClientData>(state => state.clientData);
     function actionsFn(params: GridRowParams): JSX.Element[] {
         const actionElements: JSX.Element[] = [
-            <GridActionsCellItem label="Remove" onClick={() => showRemoveConfirmation(params.id as number)} icon={<Delete />} />,
-            <GridActionsCellItem label="Edit" onClick={() => editFn(params.id as number)} icon={<Edit />} />,
-            <GridActionsCellItem label="Details" icon={<Visibility />} onClick={showDetails.bind(undefined, params.id as number)} />
+            <GridActionsCellItem label="Details" icon={<Visibility />}
+                onClick={showDetails.bind(undefined, params.id as number)} />
         ]
-        return !!clientData.isAdmin ? actionElements : actionElements.slice(2, 3);
+        if (clientData.isAdmin) {
+            actionElements.push(<GridActionsCellItem label="Edit" onClick={() => editFn(params.id as number)}
+                icon={<Edit />} />,
+                <GridActionsCellItem label="Remove" onClick={() => showRemoveConfirmation(params.id as number)}
+                    icon={<Delete />} />)
+        }
+        return actionElements;
     }
     function showDetails(id: number) {
         shownCourse.current = courses.find(c => c.id === id);
