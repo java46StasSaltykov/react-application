@@ -6,15 +6,17 @@ import { LOGIN_PATH } from "../../config/routes-config";
 import { authService } from "../../config/service-config";
 import { emptyClientData } from "../../models/ClientData";
 import { authAction } from "../../redux/actions";
+
 const Logout: React.FC = () =>
 {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    function onLogout() {
-        if (authService.logout()) {
+    async function onLogout() {
+        if (await authService.logout()) {
             dispatch(authAction(emptyClientData));
             navigate(LOGIN_PATH);
         }
+
     }
     return <Button onClick={onLogout}>Logout</Button>
 }
